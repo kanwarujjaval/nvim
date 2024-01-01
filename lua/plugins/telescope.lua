@@ -8,13 +8,19 @@ local M = {
 	},
 	keys = {
 		{ "<C-p>", "<cmd>lua require('telescope.builtin').find_files()<cr>" },
+		{ "<C-M-f>", "<cmd>lua require('telescope.builtin').git_files()<cr>" }, -- Find files in git
 		{ "<C-g>", "<cmd>lua require('telescope.builtin').live_grep()<cr>" },
 		{ "<C-f>", "<cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<cr>" },
-		{ "<C-M-f>", "<cmd>lua require('telescope.builtin').git_files()<cr>" }, -- Find files in git
+
 		{
-			"<C-M-a>",
+			"<leader>ff",
 			"<cmd>lua require('telescope.builtin').find_files({ find_command = {'rg', '--files', '--iglob', '!{.git,node_modules}/*' }})<cr>",
-		}, -- Find in all files
+		},
+		{ "<leader>fa", "<cmd>lua require('telescope.builtin').live_grep()<cr>" },
+		{ "<leader>fc", "<cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<cr>" },
+		{ "<leader>fb", "<cmd>lua require('telescope.builtin').buffers()<cr>" }, -- Find files in git
+		{ "<leader>fg", "<cmd>lua require('telescope.builtin').git_files()<cr>" },
+		{ "<leader>fh", "<cmd>lua require('telescope.builtin').help_tags()<cr>" },
 	},
 	opts = function()
 		local actions = require("telescope.actions")
@@ -31,6 +37,10 @@ local M = {
 			},
 			defaults = {
 				mappings = { i = { ["<esc>"] = actions.close } },
+				file_ignore_patterns = {
+					"node_modules",
+					-- ".git",
+				},
 			},
 			extensions = {
 				fzf = {
