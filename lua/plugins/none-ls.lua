@@ -13,6 +13,9 @@ local M = {
         null_ls.builtins.formatting.prettierd.with({
           filetypes = { "json", "markdown" }, -- Exclude filetypes handled by eslint_d
         }),
+        null_ls.builtins.diagnostics.mypy,
+        null_ls.builtins.formatting.ruff,
+        null_ls.builtins.formatting.black,
       },
     })
   end,

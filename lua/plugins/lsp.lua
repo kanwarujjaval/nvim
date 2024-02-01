@@ -16,6 +16,7 @@ local M = {
 					"tsserver",
 					"lua_ls",
 					"html",
+          "pyright",
 				},
 			})
 		end,
@@ -31,6 +32,9 @@ local M = {
 			})
 			lspconfig.tsserver.setup({
 				capabilities = capabilities,
+        init_options = {
+          disableSuggestions = true,
+        }
 			})
 			lspconfig.lua_ls.setup({
 				capabilities = capabilities,
@@ -38,6 +42,9 @@ local M = {
 			lspconfig.html.setup({
 				capabilities = capabilities,
 			})
+      lspconfig.pyright.setup({
+        capabilities = capabilities,
+      })
 
 			-- Global mappings.
 			-- See `:help vim.diagnostic.*` for documentation on any of the below functions
@@ -72,7 +79,11 @@ local M = {
 					vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, opts)
 					vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
 					vim.keymap.set("n", "<leader>cf", function()
-						vim.lsp.buf.format({ async = true })
+						vim.lsp.buf.format({
+							filter = function(client)
+								return client.name == "null-ls"
+							end,
+						})
 					end, opts)
 				end,
 			})

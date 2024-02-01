@@ -22,6 +22,11 @@ local M = {
 				{ "williamboman/mason.nvim", opts = {} },
 			},
 		},
+		{
+			"mfussenegger/nvim-dap-python",
+			lazy = false,
+			event = "BufReadPre",
+		},
 	},
 	config = function()
 		require("dapui").setup()
@@ -29,10 +34,13 @@ local M = {
 		require("mason-nvim-dap").setup({
 			ensure_installed = {
 				"js",
+				"python",
 			},
 		})
 
 		local dap, dapui = require("dap"), require("dapui")
+		local path = require("mason-registry").get_package("debugpy"):get_install_path()
+		require("dap-python").setup(path .. "/venv/bin/python")
 
 		for _, language in ipairs({ "typescript", "javascript" }) do
 			dap.configurations[language] = {
@@ -139,20 +147,21 @@ local M = {
 		vim.keymap.set("n", "<Leader>dl", ":DapListBreakpoints<CR>") -- List breakpoints
 		vim.keymap.set("n", "<Leader>dv", ":DapUIVariables<CR>") -- Show variables view
 		vim.keymap.set("n", "<Leader>dt", ":DapUIStacktrace<CR>") -- Show stacktrace
-    vim.keymap.set("n", "<Leader>dT", ":DapVirtualTextToggle<CR>") -- Show errors
+		vim.keymap.set("n", "<Leader>dT", ":DapVirtualTextToggle<CR>") -- Show errors
 		vim.keymap.set("n", "<Leader>dw", ":DapUIWatch<CR>") -- Show watches view
 		vim.keymap.set("n", "<Leader>d?", ":DapToggleRepl<CR>") -- Toggle DapToggleRepl
 		vim.keymap.set("n", "<leader>dV", function()
 			require("dap.ui.widgets").hover()
 		end)
-		vim.keymap.set("n", "<Leader>dll", function()
-			if vim.fn.filereadable(".vscode/launch.json") then
-				require("dap.ext.vscode").load_launchjs(nil, {
-					node = { "typescript", "javascript" },
-					["pwa-node"] = { "typescript", "javascript" },
-				})
-			end
+		vim.keymap.set("n", "<leader>dM", function()
+			require("dap-python").test_method()
 		end)
+    vim.keymap.set("n", "<leader>dS", function()
+      require("dap-python").debug_selection()
+    end)
+    vim.keymap.set("n", "<leader>dC", function()
+      require("dap-python").debug_class()
+    end)
 
 		-- Highlight groups
 		vim.api.nvim_set_hl(0, "DapBreakpoint", { fg = "#fb4934", bg = "#3c3836" }) -- bright red
